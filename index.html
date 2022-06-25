@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="style.css" media="screen" />
+    <title>Gra w memory!!!</title>
+  </head>
+  <body>
+    <header>
+      <h1>"Gra rozwijająca pamięc, należy wskazać dwie takie same karty."</h1>
+    </header>
+
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+  </body>
+  <script>
+    const kolory = [
+      "card1",
+      "card1",
+      "card2",
+      "card2",
+      "card3",
+      "card3",
+      "card4",
+      "card4",
+      "card5",
+      "card5",
+      "card6",
+      "card6",
+      "card7",
+      "card7",
+      "card8",
+      "card8",
+      "card9",
+      "card9",
+    ];
+
+    let karty = document.querySelectorAll("div"); // tablica z div
+    karty = [...karty];
+
+    const aktualnyczas = new Date().getTime(); // czas
+
+    let aktywnakart = "";
+    const aktywnakarta = [];
+
+    const czasgry = karty.length / 2; // wynik
+    let wynikgry = 0;
+
+    const KliknaKart = function () {
+      aktywnakart = this;
+
+      if (aktywnakart == aktywnakarta[0]) return;
+
+      aktywnakart.classList.remove("hidden");
+
+      if (aktywnakarta.length === 0) {
+        aktywnakarta[0] = aktywnakart;
+        return;
+      } else {
+        karty.forEach((card) => card.removeEventListener("click", KliknaKart));
+        aktywnakarta[1] = aktywnakart;
+
+        setTimeout(function () {
+          if (aktywnakarta[0].className === aktywnakarta[1].className) {
+            console.log("trafiony, ale niezatopiony");
+            aktywnakarta.forEach((card) => card.classList.add("off"));
+            wynikgry++;
+            karty = karty.filter((card) => !card.classList.contains("off"));
+            if (wynikgry == czasgry) {
+              const endTime = new Date().getTime();
+              const gameTime = (endTime - aktualnyczas) / 1000;
+              alert(`Udało się! Twój wynik to: ${gameTime} sekund`);
+              location.reload();
+            }
+          } else {
+            alert("nie trafiłeś, spróbuj ponownie");
+            aktywnakarta.forEach((card) => card.classList.add("hidden"));
+          }
+          aktywnakart = "";
+          aktywnakarta.length = 0;
+          karty.forEach((card) => card.addEventListener("click", KliknaKart));
+        }, 500);
+      }
+    };
+
+    const init = function () {
+      karty.forEach((card) => {
+        const position = Math.floor(Math.random() * kolory.length);
+        card.classList.add(kolory[position]);
+        kolory.splice(position, 1);
+      });
+      setTimeout(function () {
+        karty.forEach((card) => {
+          card.classList.add("hidden");
+          card.addEventListener("click", KliknaKart);
+        });
+      }, 3000); // czas na inicie
+    };
+
+    init();
+  </script>
+</html>
